@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+    private UserRegisterTask mRegTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -106,6 +107,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        Button mEmailRegisterButton = (Button) findViewById(R.id.email_register_button);
+        mEmailRegisterButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptRegister();
+            }
+        });
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -131,8 +140,9 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth.signInWithEmailAndPassword(email, password).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
+            public void onFailure( Exception e) {
                 Log.d(TAG, "authenticateUser() failure: " + e.toString());
+
                 Intent starterIntent = getIntent();
                 startActivity(starterIntent);
             }
@@ -140,10 +150,21 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(AuthResult authResult) {
                 Log.d(TAG, "authenticateUser() succesfully authenticated user:" + mAuth.getCurrentUser().getEmail());
+
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.putExtra("FIREBASE_URL", FIREBASE_URL);
-
                 startActivity(intent);
+            }
+        }).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(TAG, "authenticateUser() completed:" + task.isSuccessful());
+
+                if (!task.isSuccessful()){
+                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                    Toast.makeText(LoginActivity.this, "Authentication failed...",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -183,6 +204,53 @@ public class LoginActivity extends AppCompatActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+    private void attemptRegister() {
+        if (mRegTask != null) {
+            return;
+        }
+
+        // Reset errors.
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            showProgress(true);
+            mRegTask = new UserRegisterTask(email, password);
+            mRegTask.execute((Void) null);
+        }
+    }
+
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -297,10 +365,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "Auth network...");
                 authenticateUser(mEmail, mPassword);
 
-            // TODO: register the new account here.
-            //    Log.d(TAG, "Auth register...");
-             //   registerUser(mEmail, mPassword);
-
             return true;
         }
 
@@ -320,6 +384,46 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onCancelled() {
             mAuthTask = null;
+            showProgress(false);
+        }
+    }
+
+    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mEmail;
+        private final String mPassword;
+
+        UserRegisterTask(String email, String password) {
+            mEmail = email;
+            mPassword = password;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            // TODO: register the new account here.
+            Log.d(TAG, "Auth register...");
+            registerUser(mEmail, mPassword);
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mRegTask = null;
+            showProgress(false);
+
+            if (success) {
+                finish();
+            } else {
+                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mRegTask = null;
             showProgress(false);
         }
     }
