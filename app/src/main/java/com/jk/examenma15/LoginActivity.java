@@ -23,6 +23,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,6 +33,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Map;
 
 /**
  * A login screen that offers login via email/password.
@@ -178,6 +183,39 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+
+//    private void regUser(String email, String password){
+//        Firebase ref = new Firebase("https://examenma15.firebaseio.com");
+//        ref.createUser(email, password, new Firebase.ValueResultHandler<Map<String, Object>>() {
+//            @Override
+//            public void onSuccess(Map<String, Object> result) {
+//                System.out.println("Successfully created user account with uid: " + result.get("uid"));
+//
+//                startActivity(new Intent(getApplicationContext(), LoginActivity.class ));
+//            }
+//            @Override
+//            public void onError(FirebaseError firebaseError) {
+//                Log.d(TAG, firebaseError.toString());
+//            }
+//        });
+//    }
+//
+//    private void loginUser(String email, String password){
+//        Firebase ref = new Firebase("https://examenma15.firebaseio.com");
+//        ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
+//            @Override
+//            public void onAuthenticated(AuthData authData) {
+//                System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+//
+//                startActivity(new Intent(getApplicationContext(), MainActivity.class ));
+//
+//            }
+//            @Override
+//            public void onAuthenticationError(FirebaseError firebaseError) {
+//                Log.d(TAG, firebaseError.toString());
+//            }
+//        });
+//    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
