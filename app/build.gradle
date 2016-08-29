@@ -25,3 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.firebase:firebase-client-android:2.5.2'
 }
+
+apply plugin: 'com.google.gms.google-services'
