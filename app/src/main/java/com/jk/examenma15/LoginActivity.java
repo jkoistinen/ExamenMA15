@@ -91,9 +91,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Firebase.setAndroidContext(this);
-
-        Firebase myFirebaseRef = new Firebase(FIREBASE_URL);
+        //Firebase myFirebaseRef = new Firebase(FIREBASE_URL);
 
         //DEBUG
         AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
@@ -172,7 +170,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "authenticateUser() failure: " + e.toString());
-
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class ));
             }
         }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -185,14 +182,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-
     }
 
     private void registerUser(String email, String password){
 
         Log.d(TAG, "registerUser() ran...");
-
-
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -437,9 +431,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 authenticateUser(mEmail, mPassword);
 
             // TODO: register the new account here.
-
-                //Log.d(TAG, "Auth register...");
-                //registerUser(mEmail, mPassword);
+                Log.d(TAG, "Auth register...");
+                registerUser(mEmail, mPassword);
 
             return true;
         }
