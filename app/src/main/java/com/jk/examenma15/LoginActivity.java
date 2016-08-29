@@ -89,6 +89,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //DEBUG
+        AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
+        emailtextview.setText("joe@joe.com");
+
+        EditText passwordedittext = (EditText) findViewById(R.id.password);
+        passwordedittext.setText("joejoejoe");
+        //DEBUG
+        
         Firebase.setAndroidContext(this);
 
         mAuth = FirebaseAuth.getInstance();
