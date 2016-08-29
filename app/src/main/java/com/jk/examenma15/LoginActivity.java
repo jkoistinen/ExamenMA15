@@ -84,10 +84,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private Firebase myFirebaseRef;
 
+    private static String FIREBASE_URL = "https://examenma15.firebaseio.com/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //Firebase.setAndroidContext(this);
+
+        Firebase myFirebaseRef = new Firebase(FIREBASE_URL);
 
         //DEBUG
         AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
@@ -96,8 +102,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         EditText passwordedittext = (EditText) findViewById(R.id.password);
         passwordedittext.setText("joejoejoe");
         //DEBUG
-        
-        Firebase.setAndroidContext(this);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -153,6 +157,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onStop() {
+        Log.d(TAG, "onStop called!");
         super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
@@ -168,28 +173,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "authenticateUser() failure: " + e.toString());
 
-                startActivity(new Intent(getBaseContext(), LoginActivity.class ));
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class ));
             }
         }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
                 Log.d(TAG, "authenticateUser() succesfully authenticated user:" + mAuth.getCurrentUser().getEmail());
-
-                startActivity(new Intent(getBaseContext(), MainActivity.class));
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                intent.putExtra("FIREBASE_URL", FIREBASE_URL);
+                startActivity(intent);
             }
         });
+
+
     }
 
     private void registerUser(String email, String password){
 
         Log.d(TAG, "registerUser() ran...");
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, e.toString());
-            }
-        });
+
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -207,7 +210,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                         // ...
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, e.toString());
+            }
+        });
 
     }
 
@@ -425,30 +433,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-
                 Log.d(TAG, "Auth network...");
                 authenticateUser(mEmail, mPassword);
 
-            } catch (InterruptedException e) {
-                Log.d(TAG, e.toString());
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
             // TODO: register the new account here.
 
-            Log.d(TAG, "Auth register...");
-            registerUser(mEmail, mPassword);
+                //Log.d(TAG, "Auth register...");
+                //registerUser(mEmail, mPassword);
 
             return true;
         }

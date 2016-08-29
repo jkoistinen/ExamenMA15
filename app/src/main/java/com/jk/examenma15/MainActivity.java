@@ -1,5 +1,6 @@
 package com.jk.examenma15;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,12 +25,21 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private Firebase myFirebaseRef;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Firebase.setAndroidContext(this);
+        Intent intent = getIntent();
+        final String url = intent.getStringExtra("FIREBASE_URL");
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -38,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getDisplayName());
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getEmail());
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -47,19 +58,15 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        FirebaseUser user = mAuth.getCurrentUser();
-        Log.d(TAG, "DisplayName:" + user.getDisplayName());
-
+        myFirebaseRef = new Firebase(url);
 
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("todos");
 
+        //ToDo todo = new ToDo("Test", 1234);
 
-
-        ToDo todo = new ToDo("Test", 1234);
-
-        myRef.setValue(todo);
+        //myRef.setValue(todo);
 
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
