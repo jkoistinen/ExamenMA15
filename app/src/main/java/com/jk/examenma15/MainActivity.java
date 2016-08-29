@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
         //Other setup code
 
-        Firebase myFirebaseRef = new Firebase("https://examenma15.firebaseio.com/todos/");
+        Firebase myFirebaseRef = new Firebase("https://examenma15.firebaseio.com/");
 
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
                 for(DataSnapshot todoSnapshot: dataSnapshot.getChildren()){
 
-                    ToDo todo = (ToDo) todoSnapshot;
+                    //ToDo todo = (ToDo) todoSnapshot;
 
-                    Log.d("TAG", todo.getText());
+                    //Log.d("TAG", todo.getText());
 
                 }
             }
