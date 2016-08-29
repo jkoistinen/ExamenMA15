@@ -12,8 +12,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity {
 
     private static String TAG = "MainActivity";
@@ -26,26 +24,28 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
         //Other setup code
 
-        Firebase myFirebaseRef = new Firebase("https://examenma15.firebaseio.com/");
-
-        myFirebaseRef.child("message").setValue("Do you have data? You'll love Firebase.");
+        Firebase myFirebaseRef = new Firebase("https://examenma15.firebaseio.com/todos/");
 
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
+        DatabaseReference myRef = database.getReference("todos");
 
-        myRef.setValue("Hello, World!");
+        ToDo todo = new ToDo("Test", 1234);
+
+        myRef.setValue(todo);
 
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
 
-                updateTextView(value);
+                for(DataSnapshot todoSnapshot: dataSnapshot.getChildren()){
+
+                    ToDo todo = (ToDo) todoSnapshot;
+
+                    Log.d("TAG", todo.getText());
+
+                }
             }
 
             @Override
