@@ -3,10 +3,8 @@ package com.jk.examenma15;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ListViewCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,9 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -78,26 +74,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_multichoice, todolists);
-
-        final ListView mTodolists = (ListView) findViewById(R.id.todolistView);
-
-        mTodolists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(TAG, "clicked item "+i);
-
-                //Send to TodoListActivity
-                //Package int i to TodoListActivity, send in Bundle with the Intent.
-            }
-        });
-
-        mTodolists.setAdapter(adapter);
-
-
-        Intent intent = getIntent();
-        final String url = intent.getStringExtra("FIREBASE_URL");
-
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -115,6 +91,28 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        TextView greeting = (TextView) findViewById(R.id.greetingtextview);
+        greeting.setText(mAuth.getCurrentUser().getEmail().toString());
+
+        adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_multichoice, todolists);
+
+        final ListView mTodolists = (ListView) findViewById(R.id.todolistView);
+
+        mTodolists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "clicked item "+i);
+
+                //Send to TodoListActivity
+                //Package int i to TodoListActivity, send in Bundle with the Intent.
+            }
+        });
+
+        mTodolists.setAdapter(adapter);
+
+        Intent intent = getIntent();
+        final String url = intent.getStringExtra("FIREBASE_URL");
+
         myFirebaseRef = new Firebase(url);
 
         //path is todos/$UID/List1
@@ -131,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("todos/"+UID);
 
-        //myRef.setValue("Testing...");
-
         Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
 
         // Read from the database
@@ -140,13 +136,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, ""+dataSnapshot.getChildrenCount());
-                //Log.d(TAG,"db changed!" + dataSnapshot.getValue());
-
-                //String value = dataSnapshot.getValue().toString();
-
-                //Log.d(TAG, "onDataChange:"+value);
-
-                //updateList(value);
 
                 //clear the ListView, clear the ArrayList and notify the adapter that data has changed.
                 todolists.clear();
@@ -158,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
 
                     updateList(todo.getText()+" "+todo.getExpiredate());
                 }
-
-
             }
 
             @Override
@@ -173,12 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateTextView(String value){
 
-        TextView textview = (TextView) findViewById(R.id.textview);
+        TextView textview = (TextView) findViewById(R.id.greetingtextview);
         textview.setText(value);
 
     }
-
-
-
-
 }
