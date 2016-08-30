@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private Firebase myFirebaseRef;
+    private Firebase userRef;
 
     private List<String> todolists = new ArrayList<String>();
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         todolists.add(listname);
         adapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -73,11 +75,11 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_multichoice, todolists);
 
-        todolists.add("List 1");
-        todolists.add("List 2");
-        todolists.add("List 3");
-        todolists.add("List 4");
-        todolists.add("List 5");
+//        todolists.add("List 1");
+//        todolists.add("List 2");
+//        todolists.add("List 3");
+//        todolists.add("List 4");
+//        todolists.add("List 5");
 
         ListView mTodolists = (ListView) findViewById(R.id.todolistView);
 
@@ -120,11 +122,19 @@ public class MainActivity extends AppCompatActivity {
         //path is todos/$UID/List1
         String UID = mAuth.getCurrentUser().getUid();
 
+        //write _ToDo_ objects here
+        userRef = myFirebaseRef.child("todos").child(UID);
+
+        ToDo todo = new ToDo("Buy Milk :)", 2020);
+        userRef.push().setValue(todo);
+        userRef.push().setValue(todo);
+        userRef.push().setValue(todo);
+
         // Write a message to the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("todos/"+UID);
 
-        myRef.setValue("Testing...");
+        //myRef.setValue("Testing...");
 
         Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
 
@@ -135,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG,"db changed!" + dataSnapshot.getValue());
 
                 String value = dataSnapshot.getValue().toString();
+
+                Log.d(TAG, "onDataChange:"+value);
 
                 updateList(value);
 
