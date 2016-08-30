@@ -56,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void pushFirebase(String text, Integer expiredate){
+        userRef.push().setValue(new ToDo(text, expiredate));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,9 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 EditText newlistEditText = (EditText) findViewById(R.id.newListEditText);
                 String newlistname = newlistEditText.getText().toString();
                 newlistEditText.setText("");
-                //updateList(newlistname);
 
-                userRef.push().setValue(new ToDo(newlistname, 2020));
+                pushFirebase(newlistname, 2050);
 
             }
         });
