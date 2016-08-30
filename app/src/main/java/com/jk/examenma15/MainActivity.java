@@ -2,11 +2,16 @@ package com.jk.examenma15;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ListViewCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,10 +38,20 @@ public class MainActivity extends AppCompatActivity {
 
     private Firebase myFirebaseRef;
 
+    private List<String> todolists = new ArrayList<String>();
+
+    private ArrayAdapter adapter;
+
     @Override
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    public void updateList(String listname) {
+
+        todolists.add(listname);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -44,22 +59,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<String> todolists = new ArrayList<String>();
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText newlistEditText = (EditText) findViewById(R.id.newListEditText);
+                String newlistname = newlistEditText.getText().toString();
+                newlistEditText.setText("");
+                updateList(newlistname);
 
-        todolists.add("hej1");
-        todolists.add("hej2");
-        todolists.add("hej3");
-        todolists.add("hej4");
-        todolists.add("hej5");
+            }
+        });
 
+        adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_multichoice, todolists);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_multiple_choice, todolists);
+        todolists.add("List 1");
+        todolists.add("List 2");
+        todolists.add("List 3");
+        todolists.add("List 4");
+        todolists.add("List 5");
 
         ListView mTodolists = (ListView) findViewById(R.id.todolistView);
 
+
+        mTodolists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "clicked item "+i);
+
+                //Send to TodoListActivity
+                //Package int i to TodoListActivity, send in Bundle with the Intent.
+            }
+        });
+
         mTodolists.setAdapter(adapter);
-
-
 
 
         Intent intent = getIntent();
@@ -86,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("todos");
+        DatabaseReference myRef = database.getReference("username");
+
+        myRef.setValue("Testing...");
 
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
