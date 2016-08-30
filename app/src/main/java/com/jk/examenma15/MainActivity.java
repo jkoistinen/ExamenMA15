@@ -6,6 +6,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+    
     public void updateTextView(String value){
 
         TextView textview = (TextView) findViewById(R.id.greetingtextview);
