@@ -68,21 +68,16 @@ public class MainActivity extends AppCompatActivity {
                 EditText newlistEditText = (EditText) findViewById(R.id.newListEditText);
                 String newlistname = newlistEditText.getText().toString();
                 newlistEditText.setText("");
-                updateList(newlistname);
+                //updateList(newlistname);
+
+                userRef.push().setValue(new ToDo(newlistname, 2020));
 
             }
         });
 
         adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_multichoice, todolists);
 
-//        todolists.add("List 1");
-//        todolists.add("List 2");
-//        todolists.add("List 3");
-//        todolists.add("List 4");
-//        todolists.add("List 5");
-
-        ListView mTodolists = (ListView) findViewById(R.id.todolistView);
-
+        final ListView mTodolists = (ListView) findViewById(R.id.todolistView);
 
         mTodolists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -125,10 +120,9 @@ public class MainActivity extends AppCompatActivity {
         //write _ToDo_ objects here
         userRef = myFirebaseRef.child("todos").child(UID);
 
-        ToDo todo = new ToDo("Buy Milk :)", 2020);
-        userRef.push().setValue(todo);
-        userRef.push().setValue(todo);
-        userRef.push().setValue(todo);
+        //userRef.push().setValue(new ToDo("Buy Milk", 2020));
+        //userRef.push().setValue(new ToDo("Buy Vread", 2020));
+        //userRef.push().setValue(new ToDo("Buy Cow", 2020));
 
         // Write a message to the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -142,16 +136,24 @@ public class MainActivity extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG,"db changed!" + dataSnapshot.getValue());
+                Log.d(TAG, ""+dataSnapshot.getChildrenCount());
+                //Log.d(TAG,"db changed!" + dataSnapshot.getValue());
 
-                String value = dataSnapshot.getValue().toString();
+                //String value = dataSnapshot.getValue().toString();
 
-                Log.d(TAG, "onDataChange:"+value);
+                //Log.d(TAG, "onDataChange:"+value);
 
-                updateList(value);
+                //updateList(value);
+
+                //clear the ListView, clear the ArrayList and notify the adapter that data has changed.
+                todolists.clear();
+                adapter.notifyDataSetChanged();
 
                 for(DataSnapshot todoSnapshot: dataSnapshot.getChildren()){
-                    Log.d(TAG,"db changed!");
+
+                    ToDo todo = todoSnapshot.getValue(ToDo.class);
+
+                    updateList(todo.getText()+" "+todo.getExpiredate());
                 }
 
 
