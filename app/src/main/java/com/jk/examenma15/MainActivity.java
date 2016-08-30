@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ListViewCompat;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.AuthData;
@@ -17,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +43,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        List<String> todolists = new ArrayList<String>();
+
+        todolists.add("hej1");
+        todolists.add("hej2");
+        todolists.add("hej3");
+        todolists.add("hej4");
+        todolists.add("hej5");
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_multiple_choice, todolists);
+
+        ListView mTodolists = (ListView) findViewById(R.id.todolistView);
+
+        mTodolists.setAdapter(adapter);
+
+
+
 
         Intent intent = getIntent();
         final String url = intent.getStringExtra("FIREBASE_URL");
@@ -64,10 +88,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("todos");
 
-        //ToDo todo = new ToDo("Test", 1234);
-
-        //myRef.setValue(todo);
-
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -75,11 +95,9 @@ public class MainActivity extends AppCompatActivity {
 
                 for(DataSnapshot todoSnapshot: dataSnapshot.getChildren()){
 
-                    //ToDo todo = (ToDo) todoSnapshot;
-
-                    //Log.d("TAG", todo.getText());
-
                 }
+
+
             }
 
             @Override
