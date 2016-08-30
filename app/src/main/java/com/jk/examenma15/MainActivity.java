@@ -117,19 +117,29 @@ public class MainActivity extends AppCompatActivity {
 
         myFirebaseRef = new Firebase(url);
 
+        //path is todos/$UID/List1
+        String UID = mAuth.getCurrentUser().getUid();
+
         // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("username");
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("todos/"+UID);
 
         myRef.setValue("Testing...");
+
+        Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
 
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG,"db changed!" + dataSnapshot.getValue());
+
+                String value = dataSnapshot.getValue().toString();
+
+                updateList(value);
 
                 for(DataSnapshot todoSnapshot: dataSnapshot.getChildren()){
-
+                    Log.d(TAG,"db changed!");
                 }
 
 
