@@ -46,17 +46,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateList(String listname) {
-
         todolists.add(listname);
         adapter.notifyDataSetChanged();
-
     }
 
     public void pushFirebase(String text){
         userRef.push().setValue(new ToDoList(text));
-
-        //String id = userRef.push().getKey();
-        //Log.d(TAG, "id is:"+id);
     }
 
     @Override
@@ -125,23 +120,11 @@ public class MainActivity extends AppCompatActivity {
         //write _ToDoList_ objects here
         userRef = myFirebaseRef.child("todos").child(UID);
 
-        //userRef.push().setValue(new ToDo("Buy Milk", 2020));
-        //userRef.push().setValue(new ToDo("Buy Vread", 2020));
-        //userRef.push().setValue(new ToDo("Buy Cow", 2020));
-
         // Write a message to the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("todos/"+UID);
 
         Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
-
-        //TEST WRITE
-
-        //Firebase listRef = userRef.child; // First list
-
-        //listRef.push().setValue("Testing !!!");
-
-        //END TEST WRITE
 
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
@@ -156,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 for(DataSnapshot todolistSnapshot: dataSnapshot.getChildren()){
 
                     ToDoList todolist = todolistSnapshot.getValue(ToDoList.class);
-
                     updateList(todolist.getTitle());
                 }
             }
