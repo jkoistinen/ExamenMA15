@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> todolists = new ArrayList<String>();
 
+    private List<String> firebasestringkeys = new ArrayList<String>();
+
     private ArrayAdapter adapter;
 
     @Override
@@ -99,10 +101,10 @@ public class MainActivity extends AppCompatActivity {
         mTodolists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(TAG, "clicked item "+i);
+                Log.d(TAG, "clicked item "+i+" would be mapped against "+ firebasestringkeys.get(i));
 
-                Intent intent = new Intent(getBaseContext(), TodoListActivity.class);
-                intent.putExtra("listnumber", i);
+                Intent intent = new Intent(getBaseContext(), ToDoListActivity.class);
+                intent.putExtra("LISTREF", firebasestringkeys.get(i));
                 startActivity(intent);
             }
         });
@@ -136,11 +138,19 @@ public class MainActivity extends AppCompatActivity {
                 todolists.clear();
                 adapter.notifyDataSetChanged();
 
+                firebasestringkeys.clear();
+
                 for(DataSnapshot todolistSnapshot: dataSnapshot.getChildren()){
+
+                    firebasestringkeys.add(todolistSnapshot.getKey());
 
                     ToDoList todolist = todolistSnapshot.getValue(ToDoList.class);
                     updateList(todolist.getTitle());
                 }
+                if (firebasestringkeys.size() > 0) {
+                    Log.d(TAG, firebasestringkeys.get(0));
+                }
+
             }
 
             @Override
