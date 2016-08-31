@@ -28,19 +28,33 @@ import java.util.List;
 
 public class ToDoListActivity extends AppCompatActivity {
 
+    private static String TAG = "ToDoListActivity";
+
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
-    private static String TAG = "ToDoListActivity";
 
     private Firebase myFirebaseRef;
     private Firebase userRef;
 
     private Firebase listRef;
 
+    private List<String> todolistitems = new ArrayList<String>();
+
     private ArrayAdapter adapter;
 
-    private List<String> todolistitems = new ArrayList<String>();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+    public void updateList(String itemname) {
+        todolistitems.add(itemname);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void pushFirebase(String text){
+        listRef.child("items").push().setValue(new ToDo(text, 2016));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +92,6 @@ public class ToDoListActivity extends AppCompatActivity {
             }
         };
 
-        //get the listRef
         Intent intent = getIntent();
         final String listRefintent = intent.getStringExtra("LISTREF");
 
@@ -139,17 +152,5 @@ public class ToDoListActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-    public void updateList(String itemname) {
-        todolistitems.add(itemname);
-        adapter.notifyDataSetChanged();
-    }
 
-    public void pushFirebase(String text){
-        listRef.child("items").push().setValue(new ToDo(text, 2016));
-    }
 }
