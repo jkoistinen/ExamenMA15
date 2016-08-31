@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         TextView greeting = (TextView) findViewById(R.id.greetingtextview);
-        greeting.setText(mAuth.getCurrentUser().getEmail().toString());
+        greeting.setText("Logged in as: "+mAuth.getCurrentUser().getEmail().toString());
 
         adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_multichoice, todolists);
 
@@ -105,8 +105,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "clicked item "+i);
 
-                //Send to TodoListActivity
-                //Package int i to TodoListActivity, send in Bundle with the Intent.
+                Intent intent = new Intent(getBaseContext(), TodoListActivity.class);
+                intent.putExtra("listnumber", i);
+                startActivity(intent);
             }
         });
 
