@@ -6,8 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -54,8 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void pushFirebase(String text, Integer expiredate){
-        userRef.push().setValue(new ToDo(text, expiredate));
+    public void pushFirebase(String text){
+        userRef.push().setValue(new ToDoList(text));
+
+        //String id = userRef.push().getKey();
+        //Log.d(TAG, "id is:"+id);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 String newlistname = newlistEditText.getText().toString();
                 newlistEditText.setText("");
 
-                pushFirebase(newlistname, 2050);
+                pushFirebase(newlistname);
 
             }
         });
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         //path is todos/$UID/List1
         String UID = mAuth.getCurrentUser().getUid();
 
-        //write _ToDo_ objects here
+        //write _ToDoList_ objects here
         userRef = myFirebaseRef.child("todos").child(UID);
 
         //userRef.push().setValue(new ToDo("Buy Milk", 2020));
@@ -134,6 +135,14 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
 
+        //TEST WRITE
+
+        //Firebase listRef = userRef.child; // First list
+
+        //listRef.push().setValue("Testing !!!");
+
+        //END TEST WRITE
+
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -144,11 +153,11 @@ public class MainActivity extends AppCompatActivity {
                 todolists.clear();
                 adapter.notifyDataSetChanged();
 
-                for(DataSnapshot todoSnapshot: dataSnapshot.getChildren()){
+                for(DataSnapshot todolistSnapshot: dataSnapshot.getChildren()){
 
-                    ToDo todo = todoSnapshot.getValue(ToDo.class);
+                    ToDoList todolist = todolistSnapshot.getValue(ToDoList.class);
 
-                    updateList(todo.getText()+" "+todo.getExpiredate());
+                    updateList(todolist.getTitle());
                 }
             }
 
@@ -158,13 +167,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-    }
-    
-    public void updateTextView(String value){
-
-        TextView textview = (TextView) findViewById(R.id.greetingtextview);
-        textview.setText(value);
 
     }
 }
