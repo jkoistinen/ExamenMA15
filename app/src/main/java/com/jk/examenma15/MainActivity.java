@@ -1,5 +1,6 @@
 package com.jk.examenma15;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -37,14 +38,25 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> todolists = new ArrayList<String>();
 
-    private List<String> firebasestringkeys = new ArrayList<String>();
+    private static List<String> firebasestringkeys = new ArrayList<String>();
 
-    private ArrayAdapter adapter;
+    private CustomListsAdapter adapter;
 
     @Override
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    public void showList(Integer pos, Context ctx){
+
+        Log.d(TAG, "Length firebasestringkeys:"+firebasestringkeys.size());
+        Log.d(TAG, "clicked item "+pos+" would be mapped against "+ firebasestringkeys.get(pos));
+
+        Intent intent = new Intent(ctx, ToDoListActivity.class);
+        intent.putExtra("LISTREF", firebasestringkeys.get(pos));
+        ctx.startActivity(intent);
+
     }
 
     public void updateList(String listname) {
@@ -94,22 +106,18 @@ public class MainActivity extends AppCompatActivity {
         TextView greeting = (TextView) findViewById(R.id.greetingtextview);
         greeting.setText("Logged in as: "+mAuth.getCurrentUser().getEmail().toString());
 
-        adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_multichoice, todolists);
+        adapter = new CustomListsAdapter(MainActivity.this, R.layout.activity_main_customlistview, R.id.todolistTextView, todolists);
 
-        final ListView mTodolists = (ListView) findViewById(R.id.todolistView);
+        ListView mTodolists = (ListView) findViewById(R.id.todolistView);
+
+        mTodolists.setAdapter(adapter);
 
         mTodolists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(TAG, "clicked item "+i+" would be mapped against "+ firebasestringkeys.get(i));
-
-                Intent intent = new Intent(getBaseContext(), ToDoListActivity.class);
-                intent.putExtra("LISTREF", firebasestringkeys.get(i));
-                startActivity(intent);
+                Log.d(TAG, "clicked a view");
             }
         });
-
-        mTodolists.setAdapter(adapter);
 
         Intent intent = getIntent();
         final String url = intent.getStringExtra("FIREBASE_URL");
@@ -157,6 +165,22 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot todolistSnapshot: dataSnapshot.getChildren()){
+                    firebasestringkeys.add(todolistSnapshot.getKey());
+                    Log.d(TAG, "singleValueEvent");
+                    Log.d(TAG, "Length of keys: "+firebasestringkeys.size());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 
