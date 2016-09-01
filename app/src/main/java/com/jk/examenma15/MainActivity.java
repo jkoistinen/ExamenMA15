@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static String TAG = "MainActivity";
 
-    private FirebaseAuth mAuth;
+    private static FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private Firebase myFirebaseRef;
@@ -40,12 +41,28 @@ public class MainActivity extends AppCompatActivity {
 
     private static List<String> firebasestringkeys = new ArrayList<String>();
 
-    private CustomListsAdapter adapter;
+    private static CustomListsAdapter adapter;
 
     @Override
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    public void removeListItem(Integer pos){
+
+        String listtoberemoved = firebasestringkeys.get(pos);
+
+        Firebase ref = new Firebase("https://examenma15.firebaseio.com");
+
+        //path is todos/$UID/List1
+        String UID = mAuth.getCurrentUser().getUid();
+
+        //write _ToDoList_ objects here
+        userRef = ref.child("todos").child(UID);
+
+        userRef.child(listtoberemoved).removeValue();
+
     }
 
     public void showList(Integer pos, Context ctx){

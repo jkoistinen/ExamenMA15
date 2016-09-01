@@ -45,6 +45,10 @@ public class CustomListsAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View view) {
                 Log.d("imageButton", "deleteButton clicked on position: "+pos);
+
+                //Initialise MainActivity to access methods
+                MainActivity mainactivity= new MainActivity(); //This is not good ? it extends Activity.
+                mainactivity.removeListItem(pos); //Send in the position for MainActivity
             }
         });
 
