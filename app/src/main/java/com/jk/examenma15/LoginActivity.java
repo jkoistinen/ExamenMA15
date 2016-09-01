@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
         emailtextview.setText("joe@joe.com");
 
-        EditText passwordedittext = (EditText) findViewById(R.id.password);
+        TextInputEditText passwordedittext = (TextInputEditText) findViewById(R.id.password);
         passwordedittext.setText("joejoejoe");
         //DEBUG
 
@@ -87,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = (TextInputEditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
