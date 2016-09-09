@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         userRef.child(listtoberemoved).removeValue();
 
+
     }
 
     public void showList(Integer pos, Context ctx){

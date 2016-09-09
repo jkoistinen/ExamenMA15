@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +31,21 @@ public class ToDoListActivity extends AppCompatActivity {
 
     private static String TAG = "ToDoListActivity";
 
-    private FirebaseAuth mAuth;
+    private static String teststring;
+
+    private static FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private Firebase myFirebaseRef;
     private Firebase userRef;
-
     private Firebase listRef;
+    private Firebase itemRef;
 
-    private List<String> todolistitems = new ArrayList<String>();
+    private List<String> todos = new ArrayList<String>();
 
-    private ArrayAdapter adapter;
+    private static List<String> firebasestringkeys = new ArrayList<String>();
+
+    private static CustomTodoAdapter adapter;
 
     @Override
     protected void onStart() {
@@ -48,12 +53,25 @@ public class ToDoListActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
     public void updateList(String itemname) {
-        todolistitems.add(itemname);
+        todos.add(itemname);
         adapter.notifyDataSetChanged();
     }
 
     public void pushFirebase(String text){
         listRef.child("items").push().setValue(new ToDo(text, 2016));
+    }
+
+    public void removeListItem(Integer pos){
+
+        String UID = mAuth.getCurrentUser().getUid();
+        String ListUID = teststring;
+        String ItemUID  = firebasestringkeys.get(pos);
+        myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
+        itemRef = myFirebaseRef.child("todos").child(UID).child(ListUID).child("items").child(ItemUID);
+        Log.d(TAG, itemRef.getKey());
+        todos.remove(pos);
+        itemRef.removeValue();
+
     }
 
     @Override
@@ -95,6 +113,8 @@ public class ToDoListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String listRefintent = intent.getStringExtra("LISTREF");
 
+        teststring = listRefintent;
+
         String UID = mAuth.getCurrentUser().getUid();
         myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
         userRef = myFirebaseRef.child("todos").child(UID);
@@ -115,11 +135,10 @@ public class ToDoListActivity extends AppCompatActivity {
 
                 Log.d(TAG,"dataSnapshot value is: "+dataSnapshot.getValue());
 
+                firebasestringkeys.add(dataSnapshot.getKey());
+
                 ToDo todoitem = dataSnapshot.getValue(ToDo.class);
-
-                Log.d(TAG, todoitem.getText());
-
-                updateList(todoitem.getText()+" "+"Expires:"+todoitem.getExpiredate());
+                updateList(todoitem.getText());
 
             }
 
@@ -131,6 +150,11 @@ public class ToDoListActivity extends AppCompatActivity {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onChildRemoved");
+
+                Log.d(TAG, "todos size: "+todos.size() + "firebasestringkeys size: "+firebasestringkeys.size());
+
+                //adapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -144,11 +168,18 @@ public class ToDoListActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new ArrayAdapter<String>(ToDoListActivity.this, android.R.layout.select_dialog_multichoice, todolistitems);
+        adapter = new CustomTodoAdapter(ToDoListActivity.this, R.layout.activity_to_do_customlistview, R.id.todoTextView, todos);
 
-        final ListView mTodoItems = (ListView) findViewById(R.id.todoitemView);
+        final ListView mTodos = (ListView) findViewById(R.id.todoitemView);
 
-        mTodoItems.setAdapter(adapter);
+        mTodos.setAdapter(adapter);
+
+        mTodos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "clicked a view");
+            }
+        });
 
     }
 
