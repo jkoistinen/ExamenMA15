@@ -32,21 +32,21 @@ public class ToDoListActivity extends AppCompatActivity {
 
     private static String TAG = "ToDoListActivity";
 
-    private static String listuidstring;
-
     private static FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private Firebase myFirebaseRef;
     private Firebase userRef;
-    private Firebase listRef;
-    private Firebase itemRef;
 
     private List<String> todos = new ArrayList<String>();
 
     private static List<String> firebasestringkeys = new ArrayList<String>();
 
     private static CustomTodoAdapter adapter;
+
+    private static String listuidstring;
+    private Firebase listRef;
+    private Firebase itemRef;
 
     private String title;
 
