@@ -3,6 +3,7 @@ package com.jk.examenma15;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -20,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +47,8 @@ public class ToDoListActivity extends AppCompatActivity {
     private static List<String> firebasestringkeys = new ArrayList<String>();
 
     private static CustomTodoAdapter adapter;
+
+    private String title;
 
     @Override
     protected void onStart() {
@@ -176,6 +182,23 @@ public class ToDoListActivity extends AppCompatActivity {
                 Log.d(TAG, "clicked a view");
             }
         });
+
+        //SetTitle
+        listRef.child("title").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
+                Log.d(TAG, "value is: " + dataSnapshot.getValue().toString());
+                title = dataSnapshot.getValue().toString();
+
+                setTitle(title);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+        //END SetTitle
 
     }
 
