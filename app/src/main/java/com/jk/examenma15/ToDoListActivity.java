@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -22,7 +20,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +28,7 @@ public class ToDoListActivity extends AppCompatActivity {
 
     private static String TAG = "ToDoListActivity";
 
-    private static String teststring;
+    private static String listuidstring;
 
     private static FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -51,6 +48,7 @@ public class ToDoListActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+        firebasestringkeys.clear();
     }
     public void updateList(String itemname) {
         todos.add(itemname);
@@ -63,15 +61,14 @@ public class ToDoListActivity extends AppCompatActivity {
 
     public void removeListItem(Integer pos){
 
+        Log.d(TAG, "removeListItem run!");
         String UID = mAuth.getCurrentUser().getUid();
-        String ListUID = teststring;
+        String ListUID = listuidstring;
         String ItemUID  = firebasestringkeys.get(pos);
         myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
         itemRef = myFirebaseRef.child("todos").child(UID).child(ListUID).child("items").child(ItemUID);
         Log.d(TAG, itemRef.getKey());
-        todos.remove(pos);
         itemRef.removeValue();
-
     }
 
     @Override
@@ -113,7 +110,7 @@ public class ToDoListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String listRefintent = intent.getStringExtra("LISTREF");
 
-        teststring = listRefintent;
+        listuidstring = listRefintent;
 
         String UID = mAuth.getCurrentUser().getUid();
         myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
@@ -126,8 +123,8 @@ public class ToDoListActivity extends AppCompatActivity {
         DatabaseReference myRef = database.getReference("todos/"+UID+"/"+listRefintent+"/items");
 
         Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
-
         Log.d(TAG, "myRef is:"+myRef.toString());
+        Log.d(TAG, "listRef is:"+listRef.toString());
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -150,11 +147,10 @@ public class ToDoListActivity extends AppCompatActivity {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onChildRemoved");
-
-                Log.d(TAG, "todos size: "+todos.size() + "firebasestringkeys size: "+firebasestringkeys.size());
-
-                //adapter.notifyDataSetChanged();
-
+                firebasestringkeys.remove(dataSnapshot.getKey());
+                ToDo todo = dataSnapshot.getValue(ToDo.class);
+                todos.remove(todo.getText());
+                adapter.notifyDataSetChanged();
             }
 
             @Override

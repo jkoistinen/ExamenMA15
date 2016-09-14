@@ -50,13 +50,6 @@ public class CustomTodoAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View view) {
                 Log.d("convertView", "Clicked "+pos);
-
-                //Initialise MainActivity to access methods
-                //MainActivity mainactivity= new MainActivity(); //This is not good ? it extends Activity.
-
-                //Context contextintent = getContext(); // Intent needs context.
-                //mainactivity.showList(pos, contextintent); //Send in the position and context for the Intent in MainActivity
-
             }
         });
 
