@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boolean AUTO_LOGIN = false;
         boolean DEVELOPER_MODE = true;
         if (DEVELOPER_MODE) {
             Log.d(TAG, "Developer mode enabled!");
@@ -76,13 +77,28 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //DEBUG
-//        AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
-//        emailtextview.setText("joe@joe.com");
-//
-//        TextInputEditText passwordedittext = (TextInputEditText) findViewById(R.id.password);
-//        passwordedittext.setText("joejoejoe");
-        //DEBUG
+        if (AUTO_LOGIN) {
+            AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
+            emailtextview.setText("joe@joe.com");
+
+            TextInputEditText passwordedittext = (TextInputEditText) findViewById(R.id.password);
+            passwordedittext.setText("joejoejoe");
+
+            //Press sign-in
+
+            mSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+
+            mSignInButton.post(new Runnable(){
+                @Override
+                public void run() {
+                    mSignInButton.performClick();
+                }
+            });
+        }
+
+
+
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -206,6 +222,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
 
+                        Toast.makeText(LoginActivity.this, "Registered...",Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override

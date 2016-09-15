@@ -38,10 +38,16 @@ public class MainActivity extends AppCompatActivity {
     private Firebase userRef;
 
     private List<String> todolists = new ArrayList<String>();
-
     private static List<String> firebasestringkeys = new ArrayList<String>();
-
     private static CustomListsAdapter adapter;
+
+    private FirebaseDatabase mDatabase;
+
+    private String url;
+    private String uid;
+
+    private TextView mGreetingTextView;
+    private ListView mTodolistListView;
 
     @Override
     protected void onStart() {
@@ -121,16 +127,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        TextView greeting = (TextView) findViewById(R.id.greetingtextview);
-        greeting.setText("Logged in as: "+mAuth.getCurrentUser().getEmail().toString());
+        mGreetingTextView = (TextView) findViewById(R.id.greetingtextview);
+        mGreetingTextView.setText("Logged in as: "+mAuth.getCurrentUser().getEmail().toString());
 
         adapter = new CustomListsAdapter(MainActivity.this, R.layout.activity_main_customlistview, R.id.todolistTextView, todolists);
 
-        ListView mTodolists = (ListView) findViewById(R.id.todolistView);
+        mTodolistListView = (ListView) findViewById(R.id.todolistView);
 
-        mTodolists.setAdapter(adapter);
+        mTodolistListView.setAdapter(adapter);
 
-        mTodolists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTodolistListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "clicked a view");
@@ -138,19 +144,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Intent intent = getIntent();
-        final String url = intent.getStringExtra("FIREBASE_URL");
+        url = intent.getStringExtra("FIREBASE_URL");
 
         myFirebaseRef = new Firebase(url);
 
         //path is todos/$UID/List1
-        String UID = mAuth.getCurrentUser().getUid();
+        uid = mAuth.getCurrentUser().getUid();
 
         //write _ToDoList_ objects here
-        userRef = myFirebaseRef.child("todos").child(UID);
+        userRef = myFirebaseRef.child("todos").child(uid);
 
         // Write a message to the database
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("todos/"+UID);
+        mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = mDatabase.getReference("todos/"+uid);
 
         Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
 
