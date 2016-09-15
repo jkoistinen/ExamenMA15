@@ -47,8 +47,14 @@ public class ToDoListActivity extends AppCompatActivity {
     private static String listuidstring;
     private Firebase listRef;
     private Firebase itemRef;
+    private FirebaseDatabase mDatabase;
 
     private String title;
+    private String uid;
+    private String listuid;
+    private String itemuid;
+
+    private ListView mTodosListView;
 
     @Override
     protected void onStart() {
@@ -67,13 +73,11 @@ public class ToDoListActivity extends AppCompatActivity {
 
     public void removeListItem(Integer pos){
 
-        Log.d(TAG, "removeListItem run!");
-        String UID = mAuth.getCurrentUser().getUid();
-        String ListUID = listuidstring;
-        String ItemUID  = firebasestringkeys.get(pos);
+        uid = mAuth.getCurrentUser().getUid();
+        listuid = listuidstring;
+        itemuid  = firebasestringkeys.get(pos);
         myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
-        itemRef = myFirebaseRef.child("todos").child(UID).child(ListUID).child("items").child(ItemUID);
-        Log.d(TAG, itemRef.getKey());
+        itemRef = myFirebaseRef.child("todos").child(uid).child(listuid).child("items").child(itemuid);
         itemRef.removeValue();
     }
 
@@ -118,15 +122,15 @@ public class ToDoListActivity extends AppCompatActivity {
 
         listuidstring = listRefintent;
 
-        String UID = mAuth.getCurrentUser().getUid();
+        uid = mAuth.getCurrentUser().getUid();
         myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
-        userRef = myFirebaseRef.child("todos").child(UID);
+        userRef = myFirebaseRef.child("todos").child(uid);
 
         listRef = userRef.child(listRefintent);
 
         // Write a message to the database
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("todos/"+UID+"/"+listRefintent+"/items");
+        mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = mDatabase.getReference("todos/"+uid+"/"+listRefintent+"/items");
 
         Log.d(TAG, "User UID: " + mAuth.getCurrentUser().getUid());
         Log.d(TAG, "myRef is:"+myRef.toString());
@@ -172,11 +176,11 @@ public class ToDoListActivity extends AppCompatActivity {
 
         adapter = new CustomTodoAdapter(ToDoListActivity.this, R.layout.activity_to_do_customlistview, R.id.todoTextView, todos);
 
-        final ListView mTodos = (ListView) findViewById(R.id.todoitemView);
+        mTodosListView = (ListView) findViewById(R.id.todoitemView);
 
-        mTodos.setAdapter(adapter);
+        mTodosListView.setAdapter(adapter);
 
-        mTodos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTodosListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "clicked a view");
