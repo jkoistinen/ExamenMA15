@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ExamenMA15</string>
+    <string name="app_name">ExamenMA15 - ToDoApp</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
