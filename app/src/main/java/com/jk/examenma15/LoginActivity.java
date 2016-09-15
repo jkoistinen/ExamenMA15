@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button mSignInButton;
 
     private static String TAG = "LoginActivity";
 
@@ -86,12 +87,12 @@ public class LoginActivity extends AppCompatActivity {
 
             //Press sign-in
 
-            final Button signinbutton = (Button) findViewById(R.id.email_sign_in_button);
+            mSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 
-            signinbutton.post(new Runnable(){
+            mSignInButton.post(new Runnable(){
                 @Override
                 public void run() {
-                    signinbutton.performClick();
+                    mSignInButton.performClick();
                 }
             });
         }
