@@ -38,7 +38,7 @@ public class ToDoListActivity extends AppCompatActivity {
     private Firebase myFirebaseRef;
     private Firebase userRef;
 
-    private List<String> todos = new ArrayList<String>();
+    private List<ToDo> todos = new ArrayList<ToDo>();
 
     private static List<String> firebasestringkeys = new ArrayList<String>();
 
@@ -56,7 +56,7 @@ public class ToDoListActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
         firebasestringkeys.clear();
     }
-    public void updateList(String itemname) {
+    public void updateList(ToDo itemname) {
         todos.add(itemname);
         adapter.notifyDataSetChanged();
     }
@@ -141,7 +141,7 @@ public class ToDoListActivity extends AppCompatActivity {
                 firebasestringkeys.add(dataSnapshot.getKey());
 
                 ToDo todoitem = dataSnapshot.getValue(ToDo.class);
-                updateList(todoitem.getText());
+                updateList(todoitem);
 
             }
 
@@ -155,7 +155,7 @@ public class ToDoListActivity extends AppCompatActivity {
                 Log.d(TAG, "onChildRemoved");
                 firebasestringkeys.remove(dataSnapshot.getKey());
                 ToDo todo = dataSnapshot.getValue(ToDo.class);
-                todos.remove(todo.getText());
+                todos.remove(todo);
                 adapter.notifyDataSetChanged();
             }
 

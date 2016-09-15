@@ -77,11 +77,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //DEBUG
-        AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
-        emailtextview.setText("joe@joe.com");
-
-        TextInputEditText passwordedittext = (TextInputEditText) findViewById(R.id.password);
-        passwordedittext.setText("joejoejoe");
+//        AutoCompleteTextView emailtextview = (AutoCompleteTextView) findViewById(R.id.email);
+//        emailtextview.setText("joe@joe.com");
+//
+//        TextInputEditText passwordedittext = (TextInputEditText) findViewById(R.id.password);
+//        passwordedittext.setText("joejoejoe");
         //DEBUG
 
         mAuth = FirebaseAuth.getInstance();
@@ -206,7 +206,6 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
 
-                        // ...
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override

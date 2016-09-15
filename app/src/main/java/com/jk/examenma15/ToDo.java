@@ -20,7 +20,13 @@ public class ToDo {
         return expiredate;
     }
 
-    public String getText() {
-        return text;
+    public String getText() {return text; }
+
+    @Override
+    public String toString() {
+        return "ToDo{" +
+                "text='" + text + '\'' +
+                ", expiredate=" + expiredate +
+                '}';
     }
 }
