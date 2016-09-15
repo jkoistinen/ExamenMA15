@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean AUTO_LOGIN = true;
+        boolean AUTO_LOGIN = false;
         boolean DEVELOPER_MODE = true;
         if (DEVELOPER_MODE) {
             Log.d(TAG, "Developer mode enabled!");

@@ -39,9 +39,7 @@ public class ToDoListActivity extends AppCompatActivity {
     private Firebase userRef;
 
     private List<String> todos = new ArrayList<String>();
-
     private static List<String> firebasestringkeys = new ArrayList<String>();
-
     private static CustomTodoAdapter adapter;
 
     private static String listuidstring;
