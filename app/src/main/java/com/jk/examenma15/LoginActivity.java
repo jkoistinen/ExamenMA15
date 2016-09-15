@@ -206,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
 
-                        // ...
+                        Toast.makeText(LoginActivity.this, "Registered...",Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
