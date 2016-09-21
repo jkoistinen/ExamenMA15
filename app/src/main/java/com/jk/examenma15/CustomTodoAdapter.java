@@ -6,9 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,54 +24,44 @@ import java.util.List;
  */
 public class CustomTodoAdapter extends ArrayAdapter<ToDo> {
 
-    private final List<ToDo> objects;
+    private ArrayList<ToDo> objects;
+    private Context context;
 
-    private ImageButton deleteButton;
-
-    public CustomTodoAdapter(Context context, int resource, int textViewResourceId, List<ToDo> objects) {
-        super(context, resource, textViewResourceId, objects);
+    public CustomTodoAdapter(Context context, ArrayList<ToDo> objects) {
+        super(context, 0, objects);
         this.objects = objects;
+        this.context = context;
+    }
+
+    static class ViewHolder {
+        ToDo todo;
+        TextView text;
+        TextView expiretext;
+        ImageButton deleteButton;
+
+    }
+
+    private void setupItem(ViewHolder holder) {
+        holder.text.setText(holder.todo.getText());
+        holder.expiretext.setText(holder.todo.getExpiredate().toString());
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
-        final Integer pos = position;
-
-        if(convertView == null){
+        ViewHolder holder = null;
 
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_to_do_customlistview, parent, false);
 
-        }
-        TextView text = (TextView) convertView.findViewById(R.id.todoTextView);
-        TextView expireDate = (TextView) convertView.findViewById(R.id.todoExpireTextView);
+            holder = new ViewHolder();
+            holder.todo = objects.get(position);
+            holder.text = (TextView) convertView.findViewById(R.id.todoTextView);
+            holder.expiretext = (TextView) convertView.findViewById(R.id.todoExpireTextView);
 
-        ToDo todo = objects.get(pos);
+            convertView.setTag(position);
+            setupItem(holder);
 
-        text.setText(todo.getText().toString());
-        expireDate.setText(todo.getExpiredate().toString()); // Override todo objects toString() method....
-
-        deleteButton = (ImageButton) convertView.findViewById(R.id.todoImageButtonDelete);
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("imageButton", "deleteButton clicked on position: "+pos);
-
-                //Initialise TodoActivity to access methods
-                ToDoListActivity todolistactivity = new ToDoListActivity(); //This is not good ? it extends Activity.
-                todolistactivity.removeListItem(pos); //Send in the position for MainActivity
-            }
-        });
-
-        convertView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Log.d("convertView", "Clicked "+pos);
-            }
-        });
-
-        return super.getView(position, convertView, parent);
+        return convertView;
     }
+
 }

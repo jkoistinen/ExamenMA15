@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -38,7 +39,7 @@ public class ToDoListActivity extends AppCompatActivity {
     private Firebase myFirebaseRef;
     private Firebase userRef;
 
-    private List<ToDo> todos = new ArrayList<ToDo>();
+    private ArrayList<ToDo> todos = new ArrayList<ToDo>();
 
     private static List<String> firebasestringkeys = new ArrayList<String>();
 
@@ -68,17 +69,21 @@ public class ToDoListActivity extends AppCompatActivity {
     }
 
     public void pushFirebase(String text){
-        listRef.child("items").push().setValue(new ToDo(text, 2016));
+        Firebase itemref = listRef.child("items").push();
+        itemref.setValue(new ToDo(text, 2016));
     }
 
     public void removeListItem(Integer pos){
-
-        uid = mAuth.getCurrentUser().getUid();
-        listuid = listuidstring;
         itemuid  = firebasestringkeys.get(pos);
-        myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
-        itemRef = myFirebaseRef.child("todos").child(uid).child(listuid).child("items").child(itemuid);
-        itemRef.removeValue();
+        firebasestringkeys.remove(pos);
+        Firebase itemref = listRef.child("items").child(itemuid);
+        itemref.removeValue();
+
+    }
+
+    public void deleteItemOnClickHandler(View v) {
+        Log.d(TAG, "Delete clicked!");
+        // v.getTag() returns null...why ?
     }
 
     @Override
@@ -124,8 +129,8 @@ public class ToDoListActivity extends AppCompatActivity {
 
         uid = mAuth.getCurrentUser().getUid();
         myFirebaseRef = new Firebase("https://examenma15.firebaseio.com");
-        userRef = myFirebaseRef.child("todos").child(uid);
 
+        userRef = myFirebaseRef.child("todos").child(uid);
         listRef = userRef.child(listRefintent);
 
         // Write a message to the database
@@ -157,9 +162,6 @@ public class ToDoListActivity extends AppCompatActivity {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onChildRemoved");
-                firebasestringkeys.remove(dataSnapshot.getKey());
-                ToDo todo = dataSnapshot.getValue(ToDo.class);
-                todos.remove(todo);
                 adapter.notifyDataSetChanged();
             }
 
@@ -174,18 +176,11 @@ public class ToDoListActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new CustomTodoAdapter(ToDoListActivity.this, R.layout.activity_to_do_customlistview, R.id.todoTextView, todos);
+        adapter = new CustomTodoAdapter(ToDoListActivity.this, todos);
 
         mTodosListView = (ListView) findViewById(R.id.todoitemView);
 
         mTodosListView.setAdapter(adapter);
-
-        mTodosListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(TAG, "clicked a view");
-            }
-        });
 
         //SetTitle
         listRef.child("title").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -205,6 +200,4 @@ public class ToDoListActivity extends AppCompatActivity {
         //END SetTitle
 
     }
-
-
 }

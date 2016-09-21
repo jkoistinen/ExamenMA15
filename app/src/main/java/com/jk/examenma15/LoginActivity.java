@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button mSignInButton;
 
     private static String TAG = "LoginActivity";
 
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean AUTO_LOGIN = false;
+        boolean AUTO_LOGIN = true;
         boolean DEVELOPER_MODE = true;
         if (DEVELOPER_MODE) {
             Log.d(TAG, "Developer mode enabled!");
