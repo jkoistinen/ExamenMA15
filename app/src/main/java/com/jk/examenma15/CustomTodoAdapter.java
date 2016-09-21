@@ -69,8 +69,9 @@ public class CustomTodoAdapter extends ArrayAdapter<ToDo> {
                 public void onClick(View v) {
                     remove(todo);
 
-                    ToDoListActivity todolistactivity = new ToDoListActivity();
-                    todolistactivity.removeListItem(position);
+                    if(context instanceof ToDoListActivity){
+                        ((ToDoListActivity)context).removeListItem(position);
+                    }
                 }
             });
 
