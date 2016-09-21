@@ -83,7 +83,9 @@ public class ToDoListActivity extends AppCompatActivity {
 
     public void deleteItemOnClickHandler(View v) {
         Log.d(TAG, "Delete clicked!");
-        // v.getTag() returns null...why ?
+//        ToDo todo = v.getTag();
+//        adapter.remove(todo);
+//        adapter.notifyDataSetChanged();
     }
 
     @Override

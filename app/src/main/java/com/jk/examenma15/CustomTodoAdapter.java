@@ -41,9 +41,10 @@ public class CustomTodoAdapter extends ArrayAdapter<ToDo> {
 
     }
 
-    private void setupItem(ViewHolder holder) {
+    private void setupItem(ViewHolder holder, Integer position) {
         holder.text.setText(holder.todo.getText());
         holder.expiretext.setText(holder.todo.getExpiredate().toString());
+        holder.deleteButton.setTag(position);
     }
 
     @Override
@@ -51,15 +52,25 @@ public class CustomTodoAdapter extends ArrayAdapter<ToDo> {
 
         ViewHolder holder = null;
 
+            if( convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_to_do_customlistview, parent, false);
+            }
 
             holder = new ViewHolder();
             holder.todo = objects.get(position);
             holder.text = (TextView) convertView.findViewById(R.id.todoTextView);
             holder.expiretext = (TextView) convertView.findViewById(R.id.todoExpireTextView);
+            holder.deleteButton = (ImageButton) convertView.findViewById(R.id.todoImageButtonDelete);
 
-            convertView.setTag(position);
-            setupItem(holder);
+            final ToDo todo = (ToDo) getItem(position);
+            holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    remove(todo);
+                }
+            });
+
+            setupItem(holder, position);
 
         return convertView;
     }
