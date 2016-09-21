@@ -22,6 +22,7 @@ import java.util.List;
 /**
  * Created by jk on 31/08/16.
  */
+
 public class CustomTodoAdapter extends ArrayAdapter<ToDo> {
 
     private ArrayList<ToDo> objects;
@@ -67,6 +68,9 @@ public class CustomTodoAdapter extends ArrayAdapter<ToDo> {
                 @Override
                 public void onClick(View v) {
                     remove(todo);
+
+                    ToDoListActivity todolistactivity = new ToDoListActivity();
+                    todolistactivity.removeListItem(position);
                 }
             });
 
