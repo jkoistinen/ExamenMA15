@@ -81,13 +81,6 @@ public class ToDoListActivity extends AppCompatActivity {
 
     }
 
-    public void deleteItemOnClickHandler(View v) {
-        Log.d(TAG, "Delete clicked!");
-//        ToDo todo = v.getTag();
-//        adapter.remove(todo);
-//        adapter.notifyDataSetChanged();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
