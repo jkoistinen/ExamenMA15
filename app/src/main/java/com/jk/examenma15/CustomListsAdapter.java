@@ -20,18 +20,33 @@ import java.util.List;
 /**
  * Created by jk on 31/08/16.
  */
+
 public class CustomListsAdapter extends ArrayAdapter<String> {
 
-    private ImageButton deleteButton;
+    private List<String> objects;
+    private Context context;
 
     public CustomListsAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
         super(context, resource, textViewResourceId, objects);
+        this.objects = objects;
+        this.context = context;
+    }
+
+    static class ViewHolder {
+        String todolist;
+        TextView todolistTextView;
+        ImageButton imageButtonDelete;
+    }
+
+    private void setupItem(ViewHolder holder, Integer position) {
+        holder.todolistTextView.setText(holder.todolist);
+        holder.imageButtonDelete.setTag(position);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
-        final Integer pos = position;
+        ViewHolder holder = null;
 
         if(convertView == null){
 
@@ -39,34 +54,37 @@ public class CustomListsAdapter extends ArrayAdapter<String> {
 
         }
 
-        deleteButton = (ImageButton) convertView.findViewById(R.id.imageButtonDelete);
+        holder = new ViewHolder();
+        holder.todolist = objects.get(position);
+        holder.todolistTextView = (TextView) convertView.findViewById(R.id.todolistTextView);
+        holder.imageButtonDelete = (ImageButton) convertView.findViewById(R.id.imageButtonDelete);
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
+        final String todolist = (String) getItem(position);
+        holder.imageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Log.d("imageButton", "deleteButton clicked on position: "+pos);
+            public void onClick(View v) {
+                remove(todolist);
 
-                //Initialise MainActivity to access methods
-                MainActivity mainactivity= new MainActivity(); //This is not good ? it extends Activity.
-                mainactivity.removeListItem(pos); //Send in the position for MainActivity
+                if(context instanceof MainActivity){
+                    ((MainActivity)context).removeListItem(position);
+                }
+
             }
         });
 
         convertView.setOnClickListener(new View.OnClickListener() {
-
             @Override
-            public void onClick(View view) {
-                Log.d("convertView", "Clicked "+pos);
+            public void onClick(View v) {
 
-                //Initialise MainActivity to access methods
-                MainActivity mainactivity= new MainActivity(); //This is not good ? it extends Activity.
-
-                Context contextintent = getContext(); // Intent needs context.
-                mainactivity.showList(pos, contextintent); //Send in the position and context for the Intent in MainActivity
+                if(context instanceof MainActivity){
+                    ((MainActivity)context).showList(position, context);
+                }
 
             }
         });
 
+        setupItem(holder, position);
+        
         return super.getView(position, convertView, parent);
     }
 }
