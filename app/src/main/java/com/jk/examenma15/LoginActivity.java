@@ -58,8 +58,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean AUTO_LOGIN = true;
-        boolean DEVELOPER_MODE = true;
+        boolean AUTO_LOGIN = false;
+        boolean DEVELOPER_MODE = false;
         if (DEVELOPER_MODE) {
             Log.d(TAG, "Developer mode enabled!");
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
